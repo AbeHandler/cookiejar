@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "stashcookie"
+version = "0.1.0"
+description = "store big files to amazon glacier"
+readme = "README.md"
+authors = [{ name = "Your Name", email = "abram.handler@gmail.com" }]
+license = { file = "LICENSE" }
+dependencies = []
+
+[tool.setuptools]
+packages = ["stashcookie"]
+
+[project.scripts]
+cookie = "stashcookie.cookie:main"

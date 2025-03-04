@@ -1,0 +1,4 @@
+# stores api token
+.api
+dist/*
+stashcookie.egg-info/*
