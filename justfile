@@ -3,6 +3,9 @@ set shell := ["bash", "-uec"]
 build:
     python -m build
 
+upload:
+    twine upload dist/*
+
 createvault:
     projectname=$(grep "^projectname=" .cookie.env | cut -d'=' -f2) && \
     aws s3 mb s3://"$projectname"
