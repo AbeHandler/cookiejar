@@ -1,7 +1,7 @@
 Are you too cheap for gitlfs? 
 
 ### Installation
-`pip install stashcookie`
+`pip install stashcookie` and also configure awscli
 
 ### Use
 
@@ -10,12 +10,7 @@ Are you too cheap for gitlfs?
 - Fill out `.cookie_files.txt` which is a list of files
 
 - `cookie upload`
-
-1. Configure awscli
-2. Fill out your `cookie.env` and `.cookie_files.txt`
-3. Call `just createvault`
-4. Call `just fillvault`
-5. Call `just checkvaule`
+- `cookie check`
 
 
 ### Notes
