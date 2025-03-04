@@ -1,12 +1,51 @@
 import argparse
 import os
+import subprocess
 from pathlib import Path
+
+
+def upload_file(file_path: str, projectname: str):
+    """Uploads a single file to AWS S3 Glacier Deep Archive."""
+    file = Path(file_path.strip())
+
+    if not file.exists():
+        print(f"⚠️ Skipping: {file} (File not found)")
+        return
+
+    cmd = f'aws s3 cp "{file}" s3://{projectname} --storage-class DEEP_ARCHIVE'
+    print(f"🚀 Uploading: {file}")
+
+    result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
+    
+    if result.returncode == 0:
+        print(f"✅ Successfully uploaded: {file}")
+    else:
+        print(f"❌ Upload failed: {file}\n{result.stderr}")
+
 
 def main():
     parser = argparse.ArgumentParser(description="Cookie CLI: Manage Amazon Glacier backups.")
-    parser.add_argument("command", choices=["init", "upload", "check"], help="Available commands: init")
+    subparsers = parser.add_subparsers(dest="command", required=True)
+
+    # Init command
+    subparsers.add_parser("init", help="Initialize project settings")
+
+    # Upload all files
+    subparsers.add_parser("upload-all", help="Upload all files from .cookie_files.txt")
+
+    # Upload a single file
+    upload_parser = subparsers.add_parser("upload", help="Upload a single file")
+    upload_parser.add_argument("file", type=str, help="Path to the file to upload")
+
+    # Check command
+    subparsers.add_parser("check", help="Check the S3 inventory")
 
     args = parser.parse_args()
+
+    if args.command == "upload":
+        with open(".cookie.env", "r") as inf:
+            projectname = [o.strip("\n").split('=')[1] for o in inf if "projectname=" in o][0]
+        upload_file(args.file, projectname=projectname)
 
     if args.command == "init":
         print("✅ Initializing stashcookie...")
@@ -29,17 +68,16 @@ def main():
         os.system(cmd)
         print(f"🪣 aws s3 bucket created {project_name}")
 
-    if args.command == "upload":
+    if args.command == "upload-all":
         with open(".cookie.env", "r") as inf:
             projectname = [o.strip("\n").split('=')[1] for o in inf if "projectname=" in o][0]
 
         os.system("rm .cookie.s3inventory") # reset the inventory
 
-        for _ in open(".cookie_files.txt"):
-            if len(_) > 1:
-                cmd = f'''aws s3 cp {_} s3://{projectname} --storage-class DEEP_ARCHIVE'''
-                print(f"uploading ... {_}")
-                os.system(cmd)
+        with open(".cookie_files.txt", "r") as file_list:
+            for file_path in file_list:
+                if file_path.strip():
+                    upload_file(file_path, projectname)
 
     if args.command == "check":
         with open(".cookie.env", "r") as inf:
@@ -104,8 +142,11 @@ def main():
                 # Write to output file
                 out.write(f"{file_name} {file_size}\n")
 
-        for key in local:
-            assert ons3[key] == ons3[key]
+
+        with open(".cookie.todo", "w") as of:
+            for key in local:
+                if key not in ons3 or ons3[key] != ons3[key]:
+                    of.write(key + "\n")
 
         os.system("rm .tmp .tmp_s3")
 
