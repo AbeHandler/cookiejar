@@ -72,7 +72,7 @@ def main():
         with open(".cookie.env", "r") as inf:
             projectname = [o.strip("\n").split('=')[1] for o in inf if "projectname=" in o][0]
 
-        os.system("rm .cookie.s3inventory") # reset the inventory
+        os.system("rm -rf .cookie.s3inventory") # reset the inventory
 
         with open(".cookie_files.txt", "r") as file_list:
             for file_path in file_list:
