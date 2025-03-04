@@ -2,3 +2,4 @@
 .api
 dist/*
 stashcookie.egg-info/*
+stashcookie/__pycache__/*
