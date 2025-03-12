@@ -68,6 +68,8 @@ def main():
         os.system(cmd)
         print(f"🪣 aws s3 bucket created {project_name}")
 
+        Path(".cookie_files.txt").touch()
+
     if args.command == "upload-all":
         with open(".cookie.env", "r") as inf:
             projectname = [o.strip("\n").split('=')[1] for o in inf if "projectname=" in o][0]
