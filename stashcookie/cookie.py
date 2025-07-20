@@ -65,10 +65,16 @@ def main():
         print(f"✅ Project name saved: {project_name}")
         print("📂 .cookie.env file created!")
         
-        cmd = f'''aws s3 mb s3://{project_name}'''
-        os.system(cmd)
-        print(f"🪣 aws s3 bucket created {project_name}")
-        
+        bucket_check_cmd = f'aws s3 ls s3://{project_name} 2>/dev/null'
+        bucket_exists = os.system(bucket_check_cmd) == 0
+
+        if not bucket_exists:
+            cmd = f'''aws s3 mb s3://{project_name}'''
+            os.system(cmd)
+            print(f"🪣 aws s3 bucket created {project_name}")
+        else:
+            print(f"✅ AWS S3 bucket already exists: {project_name}")
+
         Path(".cookie_files.txt").touch()
     
     if args.command == "upload-all":
