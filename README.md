@@ -1,4 +1,9 @@
-Are you too cheap for gitlfs? 
+## About
+
+- gitlfs for cheapskates
+- Make a list of big files in your repo in .cookie_files.txt
+- Use cookie jar to ensure they are synced with s3
+- Uses aws `DEEP_ARCHIVE` by default
 
 ### Installation
 `pip install stashcookie` and also configure awscli
