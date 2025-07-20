@@ -4,7 +4,7 @@ import subprocess
 from pathlib import Path
 
 
-def upload_file(file_path: str, projectname: str):
+def upload_file(file_path: str, projectname: str, storage_class: str = "DEEP_ARCHIVE"):
     """Uploads a single file to AWS S3 Glacier Deep Archive."""
     file = Path(file_path.strip())
 
@@ -12,7 +12,7 @@ def upload_file(file_path: str, projectname: str):
         print(f"⚠️ Skipping: {file} (File not found)")
         return
 
-    cmd = f'aws s3 cp "{file}" s3://{projectname} --storage-class DEEP_ARCHIVE'
+    cmd = f'aws s3 cp "{file}" s3://{projectname} --storage-class {storage_class}'
     print(f"🚀 Uploading: {file}")
 
     result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
